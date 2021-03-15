@@ -24,4 +24,4 @@ docker-ps:
 
 docker-exec-db:
 	cd docker &&\
-	docker exec -it ca_tech_db /bin/bash
+	docker exec -it ca-tech-db /bin/bash
