@@ -1,8 +1,8 @@
 package main
 
 import (
-	"CA_Tech/server/api"
-	"CA_Tech/server/model/db"
+	"server/api"
+	"server/model/db"
 )
 
 const (
