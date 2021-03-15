@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  server:
+    build: ../server
+    volumes:
+      - ../server:/go/src/CA_TECH/server
+    ports:
+      - "49400:49400"
+    container_name: "ca_tech_server"
+  mysql:
+    build: ../db
+    restart: always
+    volumes:
+      - "../db/data:/var/lib/mysql/"
+      - "../db/conf:/etc/mysql/conf.d"
+      - "../db/initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: ca_tech
+      MYSQL_USER: kazuki
+      MYSQL_PASSWORD: secret
+      TZ: 'Asia/Tokyo'
+    ports:
+      - "13306:3306"
+    container_name: "ca_tech-db"
