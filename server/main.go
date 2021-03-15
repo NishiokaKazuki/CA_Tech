@@ -1,8 +1,12 @@
 package main
 
 import (
-	"server/api"
-	"server/model/db"
+	"CA_Tech/server/api"
+	"CA_Tech/server/model/db"
+)
+
+const (
+	port = "49400"
 )
 
 func main() {
@@ -11,7 +15,7 @@ func main() {
 
 	finish := make(chan bool)
 
-	go api.ListenAndServe(":49200")
+	go api.ListenAndServe(port)
 
 	<-finish
 }
