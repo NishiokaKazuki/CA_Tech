@@ -16,6 +16,12 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
+		return
+	}
+
 	body, err := utils.ReadRequestBody(r)
 	if err != nil {
 		log.Println(err)
@@ -74,6 +80,12 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
+		return
+	}
+
 	token := r.Header.Get("Authorization")
 	user, err := qr.GetUserByToken(db.GetDBConnect(), token)
 	if err != nil {
@@ -100,6 +112,12 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
+		return
+	}
+
 	body, err := utils.ReadRequestBody(r)
 	if err != nil {
 		log.Println(err)
