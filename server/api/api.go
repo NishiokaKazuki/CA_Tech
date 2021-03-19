@@ -84,7 +84,6 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	log.Println(user)
 
 	buf, err := json.Marshal(res.User{
 		Name: user.Name,
@@ -99,6 +98,41 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
+	body, err := utils.ReadRequestBody(r)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	name, exist := body["name"]
+	if exist != true {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	token, err := qr.GetToken(db.GetDBConnect(), r.Header.Get("Authorization"))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if token.Id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	user := tables.AppUsers{
+		Id:   token.UserId,
+		Name: name,
+	}
+	err = qr.UpdateUserById(db.GetDBConnect(), user)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func ListenAndServe(port string) {

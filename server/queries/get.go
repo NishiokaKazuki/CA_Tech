@@ -31,3 +31,14 @@ func GetUserByToken(engine *xorm.Engine, token string) (tables.AppUsers, error) 
 
 	return user, err
 }
+
+func GetToken(engine *xorm.Engine, token string) (tables.Tokens, error) {
+	var tokens tables.Tokens
+
+	_, err := engine.Where(
+		"token = ?",
+		token,
+	).Get(&tokens)
+
+	return tokens, err
+}
