@@ -4,7 +4,7 @@ use ca_tech;
 CREATE TABLE app_users
 (
     id bigint unsigned AUTO_INCREMENT,
-    name text NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL UNIQUE,
     disabled boolean NOT NULL DEFAULT false,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
