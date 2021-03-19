@@ -69,6 +69,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	w.Write(buf)
 }
 
@@ -94,6 +95,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	w.Write(buf)
 }
 
