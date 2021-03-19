@@ -64,6 +64,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		Token: token,
 	})
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -72,6 +73,29 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
+	token := r.Header.Get("Authorization")
+	user, err := qr.GetUserByToken(db.GetDBConnect(), token)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if user.Id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	log.Println(user)
+
+	buf, err := json.Marshal(res.User{
+		Name: user.Name,
+	})
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.Write(buf)
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
