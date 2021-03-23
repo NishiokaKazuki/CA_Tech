@@ -10,6 +10,7 @@ import (
 	"server/model/tables"
 	qr "server/queries"
 	"server/utils"
+	"strconv"
 )
 
 func signIn(w http.ResponseWriter, r *http.Request) {
@@ -169,6 +170,49 @@ func CharacterList(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
 		return
 	}
+
+	var iCharacters []res.ICharacters
+
+	token := r.Header.Get("Authorization")
+	user, err := qr.GetUserByToken(db.GetDBConnect(), token)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if user.Id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	characters, err := qr.FindCharactersByUserId(db.GetDBConnect(), user.Id)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	sUserId := strconv.FormatUint(user.Id, 10)
+	for _, c := range characters {
+		iCharacters = append(iCharacters, res.ICharacters{
+			UserCharacterId: sUserId,
+			CharacterId:     strconv.FormatUint(c.Id, 10),
+			Name:            c.Name,
+		})
+	}
+	log.Println(iCharacters)
+
+	buf, err := json.Marshal(res.CharacterList{
+		Characters: iCharacters,
+	})
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(buf)
 }
 
 func ListenAndServe(port string) {
@@ -179,7 +223,7 @@ func ListenAndServe(port string) {
 	http.HandleFunc("/user/get", getUser)
 	http.HandleFunc("/user/update", updateUser)
 	http.HandleFunc("/gacha/draw", GachaDraw)
-	http.HandleFunc("/character/list", GachaDraw)
+	http.HandleFunc("/character/list", CharacterList)
 
 	err := http.ListenAndServe("localhost:"+port, nil)
 	if err != nil {
