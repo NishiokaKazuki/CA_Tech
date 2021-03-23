@@ -200,7 +200,6 @@ func CharacterList(w http.ResponseWriter, r *http.Request) {
 			Name:            c.Name,
 		})
 	}
-	log.Println(iCharacters)
 
 	buf, err := json.Marshal(res.CharacterList{
 		Characters: iCharacters,

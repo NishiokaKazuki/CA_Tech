@@ -83,7 +83,7 @@ INSERT INTO characters_in_gacha_groups(gacha_group_id, character_id) VALUES
     ( 3,  6),
     ( 3,  7),
     ( 3,  8),
-    ( 3,  9),s
+    ( 3,  9),
     ( 2, 10),
     ( 2, 11),
     ( 2, 12);
