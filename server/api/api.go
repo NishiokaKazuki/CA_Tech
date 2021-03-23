@@ -155,6 +155,22 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func GachaDraw(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
+		return
+	}
+}
+
+func CharacterList(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
+		return
+	}
+}
+
 func ListenAndServe(port string) {
 	log.Println("starting server", port)
 
@@ -162,6 +178,9 @@ func ListenAndServe(port string) {
 	http.HandleFunc("/user/create", createUser)
 	http.HandleFunc("/user/get", getUser)
 	http.HandleFunc("/user/update", updateUser)
+	http.HandleFunc("/gacha/draw", GachaDraw)
+	http.HandleFunc("/character/list", GachaDraw)
+
 	err := http.ListenAndServe("localhost:"+port, nil)
 	if err != nil {
 		log.Fatalln(err)
