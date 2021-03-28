@@ -17,3 +17,12 @@ type ICharacters struct {
 	CharacterId     string `json:"characterID"`
 	Name            string `json:"name"`
 }
+
+type GachaDrawResult struct {
+	Results []IResult `json:"results"`
+}
+
+type IResult struct {
+	CharacterId string `json:"characterID"`
+	Name        string `json:"name"`
+}

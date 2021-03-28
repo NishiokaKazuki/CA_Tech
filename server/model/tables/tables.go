@@ -21,3 +21,13 @@ type CharactersIsInPossessions struct {
 	CharacterId uint64
 	Quantity    uint8
 }
+
+type GachaGroups struct {
+	Id         uint64
+	Percentage uint32
+}
+
+type CharactersInGachaGroups struct {
+	GachaGroupId uint64
+	CharacterId  uint64
+}

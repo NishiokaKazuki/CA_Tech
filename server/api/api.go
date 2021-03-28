@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"log"
+	"math/rand"
 	"net/http"
 	"server/auth"
 	"server/model/db"
@@ -11,6 +12,7 @@ import (
 	qr "server/queries"
 	"server/utils"
 	"strconv"
+	"time"
 )
 
 func signIn(w http.ResponseWriter, r *http.Request) {
@@ -162,6 +164,117 @@ func GachaDraw(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("The requested method " + r.Method + " is not allowed for the " + r.Host + r.RequestURI))
 		return
 	}
+	var (
+		totalPer    uint32
+		currentPer  uint32
+		groupResult []uint64
+		characters  []tables.Characters
+		result      res.GachaDrawResult
+	)
+	groupsCounts := make(map[uint64]uint64)
+
+	token := r.Header.Get("Authorization")
+	user, err := qr.GetUserByToken(db.GetDBConnect(), token)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if user.Id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	body, err := utils.ReadRequestBody(r)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	sTimes, exist := body["times"]
+	if exist != true {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	times, err := strconv.Atoi(sTimes)
+
+	gachaGroups, err := qr.FindGachaGroups(db.GetDBConnect())
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	for _, g := range gachaGroups {
+		totalPer += g.Percentage
+		c, err := qr.CountCharactersInGachaGroupsByGachaGroupId(db.GetDBConnect(), g.Id)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		groupsCounts[g.Id] = c
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < times; i++ {
+		currentPer = 0
+		ran := rand.Intn(int(totalPer)) + 1
+		for _, g := range gachaGroups {
+			currentPer += g.Percentage
+			if ran <= int(currentPer) {
+				groupResult = append(groupResult, g.Id)
+				break
+			}
+		}
+	}
+
+	for _, r := range groupResult {
+		ran := rand.Intn(int(groupsCounts[r]))
+		ch, err := qr.GetCharactersInGachaGroups(db.GetDBConnect(), r, uint64(ran))
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		c, err := qr.GetCharacterbyId(db.GetDBConnect(), ch.CharacterId)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		log.Println(c)
+		log.Println(user)
+
+		_, err = qr.InsertCharactersIsInPossessions(db.GetDBConnect(), tables.CharactersIsInPossessions{
+			UserId:      user.Id,
+			CharacterId: c.Id,
+			Quantity:    1,
+		})
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		characters = append(characters, c)
+	}
+
+	for _, c := range characters {
+		result.Results = append(result.Results, res.IResult{
+			CharacterId: strconv.FormatUint(c.Id, 10),
+			Name:        c.Name,
+		})
+	}
+
+	buf, err := json.Marshal(result)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(buf)
 }
 
 func CharacterList(w http.ResponseWriter, r *http.Request) {

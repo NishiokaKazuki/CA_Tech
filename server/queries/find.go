@@ -19,3 +19,19 @@ func FindCharactersByUserId(engine *xorm.Engine, userId uint64) ([]tables.Charac
 
 	return characters, err
 }
+
+func FindGachaGroups(engine *xorm.Engine) ([]tables.GachaGroups, error) {
+	var gachaGroups []tables.GachaGroups
+	err := engine.Find(&gachaGroups)
+
+	return gachaGroups, err
+}
+
+func FindCharactersInGachaGroups(engine *xorm.Engine, gachaGroupIds uint64) ([]tables.CharactersInGachaGroups, error) {
+	var groups []tables.CharactersInGachaGroups
+	err := engine.In(
+		"gacha_group_id",
+		gachaGroupIds,
+	).Find(&groups)
+	return groups, err
+}

@@ -69,7 +69,7 @@ INSERT INTO characters_is_in_possessions(user_id, character_id, quantity) VALUES
     ( 3, 11, 9),
     ( 3, 12, 9);
 
-INSERT INTO gacha_groups(id, probability) VALUES
+INSERT INTO gacha_groups(id, percentage) VALUES
     ( 1, 1),
     ( 2, 4),
     ( 3, 95);

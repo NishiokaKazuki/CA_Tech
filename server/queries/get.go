@@ -42,3 +42,23 @@ func GetToken(engine *xorm.Engine, token string) (tables.Tokens, error) {
 
 	return tokens, err
 }
+
+func GetCharactersInGachaGroups(engine *xorm.Engine, gachaGroupId uint64, ran uint64) (tables.CharactersInGachaGroups, error) {
+	var group tables.CharactersInGachaGroups
+	_, err := engine.Where(
+		"gacha_group_id = ?",
+		gachaGroupId,
+	).Limit(1, int(ran)).Get(&group)
+	return group, err
+}
+
+func GetCharacterbyId(engine *xorm.Engine, id uint64) (tables.Characters, error) {
+	var character tables.Characters
+
+	_, err := engine.Where(
+		"id = ?",
+		id,
+	).Get(&character)
+
+	return character, err
+}
