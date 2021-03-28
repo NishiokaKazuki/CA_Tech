@@ -204,6 +204,7 @@ func GachaDraw(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	log.Println(gachaGroups)
 
 	for _, g := range gachaGroups {
 		totalPer += g.Percentage
@@ -246,7 +247,7 @@ func GachaDraw(w http.ResponseWriter, r *http.Request) {
 		log.Println(c)
 		log.Println(user)
 
-		_, err = qr.InsertCharactersIsInPossessions(db.GetDBConnect(), tables.CharactersIsInPossessions{
+		_, err = qr.InsertOrUpDateCharactersIsInPossessions(db.GetDBConnect(), tables.CharactersIsInPossessions{
 			UserId:      user.Id,
 			CharacterId: c.Id,
 			Quantity:    1,
