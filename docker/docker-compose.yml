@@ -1,13 +1,13 @@
 version: "3"
 
 services:
-  # server:
-  #   build: ../server
-  #   volumes:
-  #     - ../server:/go/src/CA_TECH/server
-  #   ports:
-  #     - "49400:49400"
-  #   container_name: "ca_tech_server"
+  server:
+    build: ../server
+    volumes:
+      - ../server:/go/src/CA_TECH/server
+    ports:
+      - "49400:49400"
+    container_name: "ca_tech_server"
   mysql:
     build: ../db
     restart: always

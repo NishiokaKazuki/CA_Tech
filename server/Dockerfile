@@ -1,7 +1,8 @@
 FROM golang:1.13.4
 
-RUN go get -u github.com/tockins/realize
+ENV GO111MODULE=on
 
+WORKDIR /go/src/CA_TECH/server
+COPY . .
+CMD go run main.go
 EXPOSE 49400
-
-CMD [ "realize", "start", "--run" ]
