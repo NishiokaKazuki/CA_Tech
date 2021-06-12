@@ -13,7 +13,7 @@ func GetDBConnect() *xorm.Engine {
 
 func XormConnect() *xorm.Engine {
 
-	db, err := xorm.NewEngine("mysql", "kazuki:secret@tcp(localhost:13306)/ca_tech?parseTime=true")
+	db, err := xorm.NewEngine("mysql", "kazuki:secret@tcp(ca-tech-db)/ca_tech?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}

@@ -6,7 +6,7 @@ services:
     volumes:
       - ../server:/go/src/CA_TECH/server
     ports:
-      - "49400:49400"
+      - "49300:49400"
     container_name: "ca_tech_server"
   mysql:
     build: ../db
